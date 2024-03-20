@@ -9,11 +9,11 @@ import (
 
 var DB *sql.DB
 
-
 func ConnectDB() {
-	db, err := sql.Open("mysql", "root:27oktober@/go_produk?parseTime=true")
+	konek := "root:27oktober@/go_produk?parseTime=true"
+	db, err := sql.Open("mysql", konek)
 	if err != nil {
-	panic(err)
+		panic(err)
 	}
 
 	log.Println("Database Connected")
