@@ -5,7 +5,7 @@ import (
 	"go_native/entities"
 )
 
-func GetAll() []entities.Kategori{
+func GetAll() []entities.Kategori {
 	rows, err := config.DB.Query(`SELECT * FROM categories`)
 	if err != nil {
 		panic(err)
@@ -31,14 +31,14 @@ func Create(kategorie entities.Kategori) bool {
 	result, err := config.DB.Exec(`
 	INSERT INTO categories (name, created_at, updated_at)
 	VALUE (?, ?, ?)`,
-	kategorie.Name, kategorie.CreatedAt, kategorie.UpdateAt,
+		kategorie.Name, kategorie.CreatedAt, kategorie.UpdateAt,
 	)
 
 	if err != nil {
 		panic(err)
 	}
 
-	lastInsertId, err :=  result.LastInsertId()
+	lastInsertId, err := result.LastInsertId()
 	if err != nil {
 		panic(err)
 	}
@@ -46,9 +46,9 @@ func Create(kategorie entities.Kategori) bool {
 	return lastInsertId > 0
 }
 
-func Detail(id int)entities.Kategori {
+func Detail(id int) entities.Kategori {
 	row := config.DB.QueryRow(`SELECT id, name FROM categories WHERE id = ?`, id)
-	
+
 	var kategorie entities.Kategori
 	err := row.Scan(&kategorie.Id, &kategorie.Name)
 	if err != nil {
@@ -59,7 +59,7 @@ func Detail(id int)entities.Kategori {
 }
 
 func Update(id int, kategori entities.Kategori) bool {
-	query, err := config.DB.Exec(`UPDATE categories SET name = ?, updated_at = ? WHERE id = ?`, kategori.Name, kategori. UpdateAt, id)
+	query, err := config.DB.Exec(`UPDATE categories SET name = ?, updated_at = ? WHERE id = ?`, kategori.Name, kategori.UpdateAt, id)
 	if err != nil {
 		panic(err)
 	}

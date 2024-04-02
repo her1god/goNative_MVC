@@ -11,7 +11,7 @@ import (
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	kategorie := kategorimodel.GetAll()
-	data := map[string]any {
+	data := map[string]any{
 		"kategori": kategorie,
 	}
 
@@ -29,7 +29,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		
+
 		temp.Execute(w, nil)
 	}
 
@@ -86,7 +86,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/kategori", http.StatusSeeOther )
+		http.Redirect(w, r, "/kategori", http.StatusSeeOther)
 	}
 }
 
