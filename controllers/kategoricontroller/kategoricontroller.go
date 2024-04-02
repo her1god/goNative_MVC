@@ -2,10 +2,10 @@ package kategoricontroller
 
 import (
 	"go_native/entities"
+	"go_native/logic"
 	"go_native/models/kategorimodel"
 	"net/http"
 	"strconv"
-	"text/template"
 	"time"
 )
 
@@ -15,22 +15,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		"kategori": kategorie,
 	}
 
-	temp, err := template.ParseFiles("views/kategori/index.html")
-	if err != nil {
-		panic(err)
-	}
-
-	temp.Execute(w, data)
+	logic.RenderTemplate(w, "views/kategori/index.html", data)
 }
 
 func Add(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		temp, err := template.ParseFiles("views/kategori/create.html")
-		if err != nil {
-			panic(err)
-		}
-
-		temp.Execute(w, nil)
+		logic.RenderTemplate(w, "views/kategori/create.html", nil)
 	}
 
 	if r.Method == "POST" {
@@ -41,8 +31,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		kategorie.UpdateAt = time.Now()
 
 		if ok := kategorimodel.Create(kategorie); !ok {
-			temp, _ := template.ParseFiles("views/kategori/create.html")
-			temp.Execute(w, nil)
+			logic.RenderTemplate(w, "views/kategori/create.html", nil)
 		}
 
 		http.Redirect(w, r, "/kategori", http.StatusSeeOther)
@@ -51,11 +40,6 @@ func Add(w http.ResponseWriter, r *http.Request) {
 
 func Edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		temp, err := template.ParseFiles("views/kategori/edit.html")
-		if err != nil {
-			panic(err)
-		}
-
 		idString := r.URL.Query().Get("id")
 		id, err := strconv.Atoi(idString)
 		if err != nil {
@@ -66,8 +50,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		data := map[string]any{
 			"kategori": categorie,
 		}
-
-		temp.Execute(w, data)
+		logic.RenderTemplate(w, "views/kategori/edit.html", data)
 	}
 
 	if r.Method == "POST" {
