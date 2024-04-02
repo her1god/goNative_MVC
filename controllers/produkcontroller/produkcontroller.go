@@ -2,9 +2,9 @@ package produkcontroller
 
 import (
 	"go_native/entities"
+	"go_native/logic"
 	"go_native/models/kategorimodel"
 	"go_native/models/produkmodel"
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,12 +16,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		"produk": produks,
 	}
 
-	temp, err := template.ParseFiles("views/produk/index.html")
-	if err != nil {
-		panic(err)
-	}
-
-	temp.Execute(w, data)
+	logic.RenderTemplate(w, "views/produk/index.html", data)
 }
 
 func Detail(w http.ResponseWriter, r *http.Request) {
@@ -36,27 +31,17 @@ func Detail(w http.ResponseWriter, r *http.Request) {
 		"produk": produks,
 	}
 
-	temp, err := template.ParseFiles("views/produk/detail.html")
-	if err != nil {
-		panic(err)
-	}
-
-	temp.Execute(w, data)
+	logic.RenderTemplate(w, "views/produk/detail.html", data)
 }
 
 func Add(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		temp, err := template.ParseFiles("views/produk/create.html")
-		if err != nil {
-			panic(err)
-		}
-
 		kategorie := kategorimodel.GetAll()
 		data := map[string]any{
 			"kategori": kategorie,
 		}
 
-		temp.Execute(w, data)
+		logic.RenderTemplate(w, "views/produk/create.html", data)
 	}
 
 	if r.Method == "POST" {
@@ -90,11 +75,6 @@ func Add(w http.ResponseWriter, r *http.Request) {
 
 func Edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		temp, err := template.ParseFiles("views/produk/edit.html")
-		if err != nil {
-			panic(err)
-		}
-
 		idString := r.URL.Query().Get("id")
 		id, err := strconv.Atoi(idString)
 		if err != nil {
@@ -109,7 +89,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 			"produk":   produks,
 		}
 
-		temp.Execute(w, data)
+		logic.RenderTemplate(w, "views/produk/edit.html", data)
 	}
 
 	if r.Method == "POST" {
