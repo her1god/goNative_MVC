@@ -10,10 +10,9 @@ import (
 	"time"
 )
 
-
 func Index(w http.ResponseWriter, r *http.Request) {
 	produks := produkmodel.GetAll()
-	data := map[string]any {
+	data := map[string]any{
 		"produk": produks,
 	}
 
@@ -107,7 +106,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		kategorie := kategorimodel.GetAll()
 		data := map[string]any{
 			"kategori": kategorie,
-			"produk": produks,
+			"produk":   produks,
 		}
 
 		temp.Execute(w, data)
@@ -121,8 +120,6 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-
-
 
 		categoryId, err := strconv.Atoi(r.FormValue("category_id"))
 		if err != nil {

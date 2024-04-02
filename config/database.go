@@ -3,45 +3,46 @@ package config
 import (
 	"database/sql"
 	"log"
-	"os"
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 )
 
 var DB *sql.DB
 
 func ConnectDB() {
-	err := godotenv.Load()
+	// ambil dari env go
+	err := LoadEnv()
 	if err != nil {
-		log.Fatal("tidak dapat memuat file .env: %v", err)
+		log.Fatalf("Error saat mencoba ambil env: %v", err)
 	}
 
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbHost := os.Getenv("DB_HOST")
-	dbPortStr := os.Getenv("DB_PORT")
+	// get dari method si koneksi
+	connectionString := BuildConnectionString()
 
-	dbPort, err := strconv.Atoi(dbPortStr)
+	// koneksi ke database
+	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
-		log.Fatal("DB_PORT DB salah: %v", err)
+		log.Fatalf("Error saat koneksi ke database: %v", err)
 	}
 
-	konek := dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + strconv.Itoa(dbPort) + ")/" + dbName + "?parseTime=true"
-	db, err := sql.Open("mysql", konek)
-	if err != nil {
-		log.Fatalf("Error connecting to database: %v", err)
-	}
+	// set jumlah max simultan
+	db.SetMaxOpenConns(20)
 
-	// konek := "root:27oktober@/go_produk?parseTime=true"
-	// db, err := sql.Open("mysql", konek)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	// Set jumlah max tetap aktif
+	db.SetMaxIdleConns(10)
+
+	// verif db
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("Error verifying database connection: %v", err)
+	}
 
 	log.Println("Database Connected")
-	DB = db
 
+	DB = db
+}
+
+func BuildConnectionString() string {
+	return DB_USER + ":" + DB_PASSWORD + "@tcp(" + DB_HOST + ":" + strconv.Itoa(DB_PORT) + ")/" + DB_NAME + "?parseTime=true"
 }
