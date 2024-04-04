@@ -2,9 +2,9 @@ package produkcontroller
 
 import (
 	"go_native/entities"
-	"go_native/logic"
 	"go_native/models/kategorimodel"
 	"go_native/models/produkmodel"
+	"go_native/util"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,22 +16,22 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		"produk": produks,
 	}
 
-	logic.RenderTemplate(w, "views/produk/index.html", data)
+	util.RenderTemplate(w, "views/produk/index.html", data)
 }
 
 func Detail(w http.ResponseWriter, r *http.Request) {
 	idString := r.URL.Query().Get("id")
-	id, err := strconv.Atoi(idString)
+	id, err := util.ParsingId(idString)
+
+	produks := produkmodel.Detail(id)
 	if err != nil {
 		panic(err)
 	}
-
-	produks := produkmodel.Detail(id)
 	data := map[string]any{
 		"produk": produks,
 	}
 
-	logic.RenderTemplate(w, "views/produk/detail.html", data)
+	util.RenderTemplate(w, "views/produk/detail.html", data)
 }
 
 func Add(w http.ResponseWriter, r *http.Request) {
@@ -41,13 +41,14 @@ func Add(w http.ResponseWriter, r *http.Request) {
 			"kategori": kategorie,
 		}
 
-		logic.RenderTemplate(w, "views/produk/create.html", data)
+		util.RenderTemplate(w, "views/produk/create.html", data)
 	}
 
 	if r.Method == "POST" {
 		var produks entities.Produk
 
-		categoryId, err := strconv.Atoi(r.FormValue("category_id"))
+		categoryIdStr := r.FormValue("category_id")
+		categoryId, err := util.ParsingId(categoryIdStr)
 		if err != nil {
 			panic(err)
 		}
@@ -76,7 +77,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 func Edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		idString := r.URL.Query().Get("id")
-		id, err := strconv.Atoi(idString)
+		id, err := util.ParsingId(idString)
 		if err != nil {
 			panic(err)
 		}
@@ -89,24 +90,26 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 			"produk":   produks,
 		}
 
-		logic.RenderTemplate(w, "views/produk/edit.html", data)
+		util.RenderTemplate(w, "views/produk/edit.html", data)
 	}
 
 	if r.Method == "POST" {
 		var produks entities.Produk
 
 		idString := r.FormValue("id")
-		id, err := strconv.Atoi(idString)
+		id, err := util.ParsingId(idString)
 		if err != nil {
 			panic(err)
 		}
 
-		categoryId, err := strconv.Atoi(r.FormValue("category_id"))
+		categoryIdStr := r.FormValue("category_id")
+		categoryId, err := util.ParsingId(categoryIdStr)
 		if err != nil {
 			panic(err)
 		}
 
-		stock, err := strconv.Atoi(r.FormValue("stock"))
+		stockStr := r.FormValue("stock")
+		stock, err := util.ParsingId(stockStr)
 		if err != nil {
 			panic(err)
 		}
@@ -128,7 +131,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.URL.Query().Get("id")
-	id, err := strconv.Atoi(idString)
+	id, err := util.ParsingId(idString)
 	if err != nil {
 		panic(err)
 	}

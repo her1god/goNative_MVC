@@ -2,10 +2,9 @@ package kategoricontroller
 
 import (
 	"go_native/entities"
-	"go_native/logic"
 	"go_native/models/kategorimodel"
+	"go_native/util"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -14,13 +13,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
 		"kategori": kategorie,
 	}
-
-	logic.RenderTemplate(w, "views/kategori/index.html", data)
+	util.RenderTemplate(w, "views/kategori/index.html", data)
 }
 
 func Add(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		logic.RenderTemplate(w, "views/kategori/create.html", nil)
+		util.RenderTemplate(w, "views/kategori/create.html", nil)
 	}
 
 	if r.Method == "POST" {
@@ -31,7 +29,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		kategorie.UpdateAt = time.Now()
 
 		if ok := kategorimodel.Create(kategorie); !ok {
-			logic.RenderTemplate(w, "views/kategori/create.html", nil)
+			util.RenderTemplate(w, "views/kategori/create.html", nil)
 		}
 
 		http.Redirect(w, r, "/kategori", http.StatusSeeOther)
@@ -41,7 +39,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 func Edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		idString := r.URL.Query().Get("id")
-		id, err := strconv.Atoi(idString)
+		id, err := util.ParsingId(idString)
 		if err != nil {
 			panic(err)
 		}
@@ -50,13 +48,13 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		data := map[string]any{
 			"kategori": categorie,
 		}
-		logic.RenderTemplate(w, "views/kategori/edit.html", data)
+		util.RenderTemplate(w, "views/kategori/edit.html", data)
 	}
 
 	if r.Method == "POST" {
 		var kategorie entities.Kategori
 		idString := r.FormValue("id")
-		id, err := strconv.Atoi(idString)
+		id, err := util.ParsingId(idString)
 		if err != nil {
 			panic(err)
 		}
@@ -75,7 +73,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.URL.Query().Get("id")
-	id, err := strconv.Atoi(idString)
+	id, err := util.ParsingId(idString)
 	if err != nil {
 		panic(err)
 	}
